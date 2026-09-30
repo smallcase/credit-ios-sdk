@@ -1,0 +1,15 @@
+# Tags and releases SPM packages published by Bitrise (gw-mob-ios build-sdk-spm) when a
+# publish/<channel>/<tag> PR merges. Logic lives in the reusable workflow.
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [rc, rc-debug, debug, main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: smallcase/gw-mob-ios/.github/workflows/spm-distribution-release.yml@dev
