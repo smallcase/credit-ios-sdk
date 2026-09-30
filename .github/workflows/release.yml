@@ -51,6 +51,6 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
         run: |
-          jq --arg repo "$GITHUB_REPOSITORY" '{event_type: "spm-published", client_payload: {
+          jq --arg repo "$GITHUB_REPOSITORY" '{event_type: "package-released", client_payload: {
             sdk_name: "Loans", version: .tag, channel, repo: $repo, url, checksum, source_commit}}' binaries.json |
             gh api repos/smallcase/gw-mob-ios/dispatches --input -
