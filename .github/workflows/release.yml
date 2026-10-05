@@ -1,6 +1,7 @@
 # Publishes the Loans SPM release when a publish/main/<tag> PR merges. The PR is opened by
 # case-ci-release-app from gw-mob-ios spm-publish.yml, which also uploads the ZIP to a draft
-# release. Self-contained: public repositories cannot call reusable workflows from private ones.
+# release. The tag and channel come from the publish/<channel>/<tag> branch name and the base
+# branch. Self-contained: public repositories cannot call reusable workflows from private ones.
 name: Release
 
 on:
@@ -27,7 +28,7 @@ jobs:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
           NOTES: ${{ github.event.pull_request.body }}
         run: |
-          tag=$(jq -r .tag binaries.json)
+          tag=${HEAD_REF##*/} # publish/<channel>/<tag>
           existing=$(git ls-remote origin "refs/tags/$tag" | cut -f1)
           if [ -n "$existing" ]; then
             # Rerun: fine if the tag already points here, never move it.
@@ -50,7 +51,10 @@ jobs:
       - name: Notify gw-mob-ios
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          jq --arg repo "$GITHUB_REPOSITORY" '{event_type: "package-released", client_payload: {
-            sdk_name: "Loans", version: .tag, channel, repo: $repo, url, checksum, source_commit}}' binaries.json |
+          tag=${HEAD_REF##*/}
+          jq -n --arg tag "$tag" --arg channel "$BASE_REF" --arg repo "$GITHUB_REPOSITORY" \
+            '{event_type: "package-released", client_payload: {sdk_name: "Loans", version: $tag, channel: $channel, repo: $repo}}' |
             gh api repos/smallcase/gw-mob-ios/dispatches --input -
