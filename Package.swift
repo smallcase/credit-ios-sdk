@@ -8,8 +8,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Loans",
-            url: "https://github.com/smallcase/credit-ios-sdk/releases/download/7.6.0/Loans.xcframework.zip",
-            checksum: "e9b364a212012aa4d1ee9b30b676169c50d1fe85fb890c0e7ed9bb95e7dc10e5"
+            url: "https://github.com/smallcase/credit-ios-sdk/releases/download/7.6.1/Loans.xcframework.zip",
+            checksum: "360c5121d6397ef4942e196fc28ec6f574810f4345632e77557ab150caacd95c"
         ),
     ]
 )
